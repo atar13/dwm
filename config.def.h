@@ -33,6 +33,7 @@ static const char *colors[][3]      = {
 };
 
 static const char *const autostart[] = {
+  "go-dwm-statusbar", NULL,
 	"sh", "-c", "/home/atarbinian/.fehbg", NULL,
 	"picom", "--experimental-backends", NULL,
 	"dunst", NULL,
