@@ -31,6 +31,16 @@ static const char *colors[][3]      = {
 	[SchemeSel]  = { col_black, col_brightpurple,  col_brightpurple },
 };
 
+static const char *const autostart[] = {
+	"sh", "-c", "/home/atarbinian/.fehbg", NULL,
+	"picom", "--experimental-backends", NULL,
+	"dunst", NULL,
+	"nm-applet", NULL,
+	"pnmixer", NULL,
+	"blueman-applet", NULL,
+	NULL /* terminate */
+};
+
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
