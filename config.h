@@ -44,7 +44,12 @@ static const char *const autostart[] = {
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+#define MAX_TAGNAME_LEN 14		/* excludes TAG_PREPEND */
+#define TAG_PREPEND "%s  "		/* formatted as 2 chars */
+#define MAX_TAGLEN 16			/* altogether */
+static char tags[][MAX_TAGLEN] = { "", "", "", "", "", "", "", "", "" };
+static char const const_tags[][MAX_TAGLEN] = { "", "", "", "", "", "", "", "", "" };
+
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -125,6 +130,7 @@ static Key keys[] = {
 	{ 0,             								XF86XK_AudioPlay,     		 spawn,          {.v = play_cmd } },
 	{ 0,             								XF86XK_AudioPrev,   			 spawn,          {.v = previous_cmd } },
 	{ 0,             								XF86XK_AudioNext,     		 spawn,          {.v = next_cmd } },
+	{ MODKEY|ShiftMask,             XK_n,      nametag,        {0} },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_a,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_s,      focusstack,     {.i = -1 } },
