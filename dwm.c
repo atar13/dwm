@@ -74,6 +74,9 @@
 #define VERSION_MINOR               0
 #define XEMBED_EMBEDDED_VERSION (VERSION_MAJOR << 16) | VERSION_MINOR
 
+#define GAP_TOGGLE 100
+#define GAP_RESET  0
+
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
 enum { SchemeNorm, SchemeSel }; /* color schemes */
@@ -212,6 +215,7 @@ static void sendmon(Client *c, Monitor *m);
 static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
+static void setgaps(const Arg *arg);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setup(void);
@@ -334,6 +338,9 @@ struct Pertag {
 	unsigned int sellts[LENGTH(tags) + 1]; /* selected layouts */
 	const Layout *ltidxs[LENGTH(tags) + 1][2]; /* matrix of tags and layouts indexes  */
 	int showbars[LENGTH(tags) + 1]; /* display bar for the current tag */
+
+	int drawwithgaps[LENGTH(tags) + 1]; /* gaps toggle for each tag */
+	int gappx[LENGTH(tags) + 1]; /* gaps for each tag */
 };
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
@@ -816,7 +823,13 @@ createmon(void)
 		m->pertag->sellts[i] = m->sellt;
 
 		m->pertag->showbars[i] = m->showbar;
+		if (i > 0) {
+			m->pertag->drawwithgaps[i] = startwithgaps[(i - 1) % LENGTH(gappx)];
+			m->pertag->gappx[i] = gappx[(i - 1) % LENGTH(gappx)];
+		}
 	}
+	m->pertag->drawwithgaps[0] = startwithgaps[0]; 
+	m->pertag->gappx[0] = gappx[0];
 
 	return m;
 }
@@ -991,6 +1004,12 @@ focus(Client *c)
 		attachstack(c);
 		grabbuttons(c, 1);
 		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
+                if (!selmon->pertag->drawwithgaps[selmon->pertag->curtag] && !c->isfloating) {
+			XWindowChanges wc;
+                        wc.sibling = selmon->barwin;
+                        wc.stack_mode = Below;
+                        XConfigureWindow(dpy, c->win, CWSibling | CWStackMode, &wc);
+                }
 		setfocus(c);
 	} else {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
@@ -1330,7 +1349,10 @@ monocle(Monitor *m)
 	if (n > 0) /* override layout symbol */
 		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
-		resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
+		if (selmon->pertag->drawwithgaps[selmon->pertag->curtag])
+			resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
+		else
+			resize(c, m->wx - c->bw, m->wy, m->ww, m->wh, False);
 }
 
 void
@@ -1604,6 +1626,15 @@ resizeclient(Client *c, int x, int y, int w, int h)
 	c->oldw = c->w; c->w = wc.width = w;
 	c->oldh = c->h; c->h = wc.height = h;
 	wc.border_width = c->bw;
+	if (!selmon->pertag->drawwithgaps[selmon->pertag->curtag] && /* this is the noborderfloatingfix patch, slightly modified so that it will work if, and only if, gaps are disabled. */
+	    (((nexttiled(c->mon->clients) == c && !nexttiled(c->next)) /* these two first lines are the only ones changed. if you are manually patching and have noborder installed already, just change these lines; or conversely, just remove this section if the noborder patch is not desired;) */
+	    || &monocle == c->mon->lt[c->mon->sellt]->arrange))
+	    && !c->isfullscreen && !c->isfloating
+	    && NULL != c->mon->lt[c->mon->sellt]->arrange) {
+	        c->w = wc.width += c->bw * 2;
+	        c->h = wc.height += c->bw * 2;
+	        wc.border_width = 0;
+	}
 	XConfigureWindow(dpy, c->win, CWX|CWY|CWWidth|CWHeight|CWBorderWidth, &wc);
 	configure(c);
 	XSync(dpy, False);
@@ -1824,6 +1855,29 @@ setfullscreen(Client *c, int fullscreen)
 			PropModeReplace, (unsigned char*)0, 0);
 		c->isfullscreen = 0;
 	}
+}
+
+void
+setgaps(const Arg *arg)
+{
+	switch(arg->i)
+	{
+		case GAP_TOGGLE:
+			selmon->pertag->drawwithgaps[selmon->pertag->curtag] = !selmon->pertag->drawwithgaps[selmon->pertag->curtag];
+			break;
+		case GAP_RESET:
+			if (selmon->pertag->curtag > 0)
+				selmon->pertag->gappx[selmon->pertag->curtag] = gappx[selmon->pertag->curtag - 1 % LENGTH(gappx)];
+			else
+				selmon->pertag->gappx[0] = gappx[0];
+			break;
+		default:
+			if (selmon->pertag->gappx[selmon->pertag->curtag] + arg->i < 0)
+				selmon->pertag->gappx[selmon->pertag->curtag] = 0;
+			else
+				selmon->pertag->gappx[selmon->pertag->curtag] += arg->i;
+	}
+	arrange(selmon);
 }
 
 void
@@ -2085,23 +2139,42 @@ tile(Monitor *m)
 	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
 	if (n == 0)
 		return;
-
-	if (n > m->nmaster)
-		mw = m->nmaster ? m->ww * m->mfact : 0;
-	else
-		mw = m->ww;
-	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
-		if (i < m->nmaster) {
-			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
-			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
-			if (my + HEIGHT(c) < m->wh)
-				my += HEIGHT(c);
-		} else {
-			h = (m->wh - ty) / (n - i);
-			resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
-			if (ty + HEIGHT(c) < m->wh)
-				ty += HEIGHT(c);
-		}
+	if (m->pertag->drawwithgaps[m->pertag->curtag]) { /* draw with fullgaps logic */
+	        if (n > m->nmaster)
+	                mw = m->nmaster ? m->ww * m->mfact : 0;
+	        else
+	                mw = m->ww - m->pertag->gappx[m->pertag->curtag];
+	        for (i = 0, my = ty = m->pertag->gappx[m->pertag->curtag], c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+	                if (i < m->nmaster) {
+	                        h = (m->wh - my) / (MIN(n, m->nmaster) - i) - m->pertag->gappx[m->pertag->curtag];
+	                        resize(c, m->wx + m->pertag->gappx[m->pertag->curtag], m->wy + my, mw - (2*c->bw) - m->pertag->gappx[m->pertag->curtag], h - (2*c->bw), 0);
+	                        if (my + HEIGHT(c) + m->pertag->gappx[m->pertag->curtag] < m->wh)
+	                                my += HEIGHT(c) + m->pertag->gappx[m->pertag->curtag];
+	                } else {
+	                        h = (m->wh - ty) / (n - i) - m->pertag->gappx[m->pertag->curtag];
+	                        resize(c, m->wx + mw + m->pertag->gappx[m->pertag->curtag], m->wy + ty, m->ww - mw - (2*c->bw) - 2*m->pertag->gappx[m->pertag->curtag], h - (2*c->bw), 0);
+	                        if (ty + HEIGHT(c) + m->pertag->gappx[m->pertag->curtag] < m->wh)
+	                                ty += HEIGHT(c) + m->pertag->gappx[m->pertag->curtag];
+	                }
+	} else { /* draw with singularborders logic */
+	        if (n > m->nmaster)
+	                mw = m->nmaster ? m->ww * m->mfact : 0;
+	        else
+	                mw = m->ww;
+	        for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+	                if (i < m->nmaster) {
+	                        h = (m->wh - my) / (MIN(n, m->nmaster) - i);
+	                        if (n == 1)
+	                                resize(c, m->wx - c->bw, m->wy, m->ww, m->wh, False);
+	                        else
+	                                resize(c, m->wx - c->bw, m->wy + my, mw - c->bw, h - c->bw, False);
+	                        my += HEIGHT(c) - c->bw;
+	                } else {
+	                        h = (m->wh - ty) / (n - i);
+	                        resize(c, m->wx + mw - c->bw, m->wy + ty, m->ww - mw, h - c->bw, False);
+	                        ty += HEIGHT(c) - c->bw;
+	                }
+	}
 }
 
 void
