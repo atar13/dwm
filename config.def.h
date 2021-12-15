@@ -3,7 +3,7 @@
 
 /* appearance */
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
-static const int startwithgaps[]    = { 0 };	/* 1 means gaps are used by default, this can be customized for each tag */
+static const int startwithgaps[]    = { 1 };	/* 1 means gaps are used by default, this can be customized for each tag */
 static const unsigned int gappx[]   = { 10 };   /* default gap between windows in pixels, this can be customized for each tag */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int scalepreview       = 4;        /* tag preview scaling */
@@ -14,7 +14,7 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const int user_bh            = 30;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+static const int user_bh            = 0;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
 static const char *fonts[]          = {"JetBrainsMono Nerd Font", "FiraCode Nerd Font", "MesloLGS NF", "Noto Color Emoji","NotoColorEmoji","Hack:size=10"};
 static const char dmenufont[]       = "MesloLGS NF:size=10";
 static const char col_gray1[]       = "#2D3132";
