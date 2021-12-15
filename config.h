@@ -73,12 +73,15 @@ static const int lockfullscreen = 0; /* 1 will force focus on the fullscreen win
 /* mouse scroll resize */
 static const int scrollsensetivity = 30; /* 1 means resize window by 1 pixel for each scroll event */
 
+#include "horizgrid.c"
+
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
-	{ "><>",      NULL },    /* no layout function means floating behavior */
+	{ "<F>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 	{ "|M|",      centeredmaster },
+	{ "#G#",      horizgrid },
 	// { ">M>",      centeredfloatingmaster },
 };
 
@@ -162,6 +165,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[3]} },
 	// { MODKEY,                       XK_o,      setlayout,      {.v = &layouts[4]} },
+	{ MODKEY,                       XK_g,      setlayout,      {.v = &layouts[4]} },
 	{ MODKEY,                       XK_Tab,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
