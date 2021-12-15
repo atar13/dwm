@@ -288,18 +288,6 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 	[ResizeRequest] = resizerequest,
 	[UnmapNotify] = unmapnotify
 };
-static Atom wmatom[WMLast], netatom[NetLast], xatom[XLast];
-static int running = 1;
-static Cur *cursor[CurLast];
-static Clr **scheme;
-static Display *dpy;
-static Drw *drw;
-static Monitor *mons, *selmon;
-static Window root, wmcheckwin;
-
-/* configuration, allows nested code to access above variables */
-#include "config.h"
-
 
 /* We only move this here to get the length of the `tags` array, which probably
  * will generate compatibility issues with other patches. To avoid it, I
@@ -327,10 +315,24 @@ struct Monitor {
 	Window tagwin;
 	//change 'LENGTH(tags)' to the actual number of tags you have (9 by def)
 	//if you wish to move this below config.h
-	Pixmap tagmap[LENGTH(tags)];
+	// Pixmap tagmap[LENGTH(tags)];
+	Pixmap tagmap[9];
 	const Layout *lt[2];
 	Pertag *pertag;
 };
+
+static Atom wmatom[WMLast], netatom[NetLast], xatom[XLast];
+static int running = 1;
+static Cur *cursor[CurLast];
+static Clr **scheme;
+static Display *dpy;
+static Drw *drw;
+static Monitor *mons, *selmon;
+static Window root, wmcheckwin;
+
+/* configuration, allows nested code to access above variables */
+#include "config.h"
+
 
 
 struct Pertag {

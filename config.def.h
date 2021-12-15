@@ -115,6 +115,8 @@ static const char *previous_cmd[] = {"playerctl", "previous", NULL};
 
 static const char *scrotcmd[] = {"sh", "/home/atarbinian/.scrot-select.sh", NULL};
 
+#include "shift-tools.c"
+
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
@@ -122,7 +124,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ShiftMask,             XK_f,      spawn,          {.v = firefoxcmd } },
 	{ MODKEY|ShiftMask,             XK_p,      spawn,          {.v = firefoxprivatecmd } },
-	{ MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lockcmd } },
+	/* { MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lockcmd } }, */
 	{ MODKEY|ShiftMask,             XK_v,      spawn,          {.v = scrotcmd } },
 	{ 0,                            XK_Print,      						 spawn,          {.v = scrotcmd } },
 	{ 0,             								XF86XK_MonBrightnessDown,  spawn,          {.v = dec_brightness } },
@@ -137,9 +139,15 @@ static Key keys[] = {
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_a,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_s,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+	{ MODKEY,                       XK_apostrophe,      incnmaster,     {.i = +1 } },
+	{ MODKEY,                       XK_semicolon,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
+	{ MODKEY,	                			XK_q, shiftview,    { .i = -1 } },
+	{ MODKEY,                       XK_w, shiftview,    { .i = +1 } },
+	{ MODKEY|ShiftMask,							XK_q,      shiftboth,      { .i = -1 }	},
+	{ MODKEY|ShiftMask,             XK_w,      shiftboth,      { .i = +1 }	},
+	{ MODKEY|ControlMask,						XK_q,      shiftswaptags,  { .i = -1 }	},
+	{ MODKEY|ControlMask,						XK_w,      shiftswaptags,  { .i = +1 }	},
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ ALT,                       		XK_Tab,    view,           {0} },
