@@ -36,7 +36,7 @@ static const char col_pink[] 	    = "#F58FE9";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_black, col_gray2 },
-	[SchemeSel]  = { col_black, col_gray,  col_brightpurple },
+	[SchemeSel]  = { col_black, col_brightpurple,  col_brightpurple },
 };
 
 static const char *const autostart[] = {
