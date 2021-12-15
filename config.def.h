@@ -50,8 +50,8 @@ static const char *const autostart[] = {
 #define MAX_TAGNAME_LEN 14		/* excludes TAG_PREPEND */
 #define TAG_PREPEND "%s  "		/* formatted as 2 chars */
 #define MAX_TAGLEN 16			/* altogether */
-static char tags[][MAX_TAGLEN] = { "", "", "", "", "", "", "", "", "" };
-static char const const_tags[][MAX_TAGLEN] = { "", "", "", "", "", "", "", "", "" };
+static char tags[][MAX_TAGLEN] = { "", "", "", "", "", "", "", "", "" };
+static char const const_tags[][MAX_TAGLEN] = { "", "", "", "", "", "", "", "", "" };
 
 
 static const Rule rules[] = {
