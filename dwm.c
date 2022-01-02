@@ -228,6 +228,7 @@ static void setborderpx(const Arg *arg);
 static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
+static void setbarpadding(const Arg *arg);
 static void layoutscroll(const Arg *arg);
 static void setgaps(const Arg *arg);
 static void setlayout(const Arg *arg);
@@ -2081,6 +2082,27 @@ setgaps(const Arg *arg)
 	}
 	arrange(selmon);
 }
+
+void
+setbarpadding(const Arg *arg)
+{
+	if (arg->i == 0) {
+		sp = sidepad;
+		vp = vertpad;
+	} else {
+		if (sp + arg->i < 0 || vp + arg->i < 0) {
+			return;
+		}
+		// only makes sense if sp and vp are the same 
+		// maybe handle other cases some other way
+		sp += arg->i;
+		vp += arg->i;
+	}
+	updatebarpos(selmon);
+	resizebarwin(selmon);
+	arrange(selmon);
+}
+
 
 void
 layoutscroll(const Arg *arg)
