@@ -2928,7 +2928,7 @@ updatepreview(void)
 		.event_mask = ButtonPressMask|ExposureMask
 	};
 	for (m = mons; m; m = m->next) {
-		m->tagwin = XCreateWindow(dpy, root, m->wx + sp, m->by + vp + bh, m->mw / scalepreview, m->mh / scalepreview, 0,
+		m->tagwin = XCreateWindow(dpy, root, m->wx + selmon->pertag->sbarpadding[selmon->pertag->curtag], m->by + selmon->pertag->vbarpadding[selmon->pertag->curtag] + bh, m->mw / scalepreview, m->mh / scalepreview, 0,
 				DefaultDepth(dpy, screen), CopyFromParent, DefaultVisual(dpy, screen),
 				CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
 		XDefineCursor(dpy, m->tagwin, cursor[CurNormal]->cursor);
