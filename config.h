@@ -47,6 +47,8 @@ static const char *const autostart[] = {
 	"nm-applet", NULL,
 	"pnmixer", NULL,
 	"blueman-applet", NULL,
+	"lxpolkit", "NULL",
+	"sh","-c", "\"/home/atarbinian/.dwm/gnome-keyring.sh\"", NULL,
 	NULL /* terminate */
 };
 
