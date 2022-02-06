@@ -29,7 +29,7 @@ static const char col_cyan[]        = "#005577";
 static const char col_purple[]      = "#9400D3";
 static const char col_black[] 	    = "#000000";
 static const char col_gray[]	    = "#545454";
-static const char col_brightpurple[] = "#7F00FF";
+static const char col_brightpurple[] = "#B968C7";
 static const char col_pastelpurple[] = "#A599E9";
 static const char col_clear[] 	    = "#a9a9a9";
 static const char col_pink[] 	    = "#F58FE9";
@@ -47,6 +47,8 @@ static const char *const autostart[] = {
 	"nm-applet", NULL,
 	"pnmixer", NULL,
 	"blueman-applet", NULL,
+	"systemctl", "start", "--user", "ulauncher.service", NULL,
+	"/home/atarbinian/.local/bin/locker", NULL,
 	"lxpolkit", "NULL",
 	"sh","-c", "\"/home/atarbinian/.dwm/gnome-keyring.sh\"", NULL,
 	NULL /* terminate */
@@ -68,6 +70,8 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "Ulauncher Preferences",  NULL,       NULL,       0,       1,           -1 },
+	{ "Zoom",  NULL,       NULL,       0,       1,           -1 },
 };
 
 /* layout(s) */
@@ -135,7 +139,7 @@ static const char *scrotcmd[] = {"sh", "/home/atarbinian/.scrot-select.sh", NULL
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-  { MODKEY,                       XK_space,  spawn,      	   {.v = roficmd} },
+  /* { MODKEY,                       XK_space,  spawn,      	   {.v = roficmd} }, */
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ShiftMask,             XK_f,      spawn,          {.v = firefoxcmd } },
 	{ MODKEY|ShiftMask,             XK_p,      spawn,          {.v = firefoxprivatecmd } },
