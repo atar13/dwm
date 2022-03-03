@@ -48,7 +48,7 @@ static const char *const autostart[] = {
 	"pnmixer", NULL,
 	"blueman-applet", NULL,
 	"systemctl", "start", "--user", "ulauncher.service", NULL,
-	"/home/atarbinian/.local/bin/locker", NULL,
+	/* "/home/atarbinian/.local/bin/locker", NULL, */
 	"lxpolkit", "NULL",
 	"sh","-c", "\"/home/atarbinian/.dwm/gnome-keyring.sh\"", NULL,
 	NULL /* terminate */
@@ -71,6 +71,7 @@ static const Rule rules[] = {
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 	{ "Ulauncher Preferences",  NULL,       NULL,       0,       1,           -1 },
+	{ "ulauncher",  NULL,       "",       0,       1,           -1 },
 	{ "Zoom",  NULL,       NULL,       0,       1,           -1 },
 };
 
