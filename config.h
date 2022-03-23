@@ -19,7 +19,7 @@ static const int user_bh            = 0;        /* 0 means that dwm will calcula
 #define ICONSIZE (bh - 3)   /* icon size */
 #define ICONSPACING 5 /* space between icon and title */
 
-static const char *fonts[]          = {"JetBrainsMono Nerd Font", "FiraCode Nerd Font", "MesloLGS NF", "Noto Color Emoji","NotoColorEmoji","Hack:size=10"};
+static const char *fonts[]          = {"DejaVuSansMono Nerd Font", "JetBrainsMono Nerd Font", "FiraCode Nerd Font", "MesloLGS NF", "Noto Color Emoji","NotoColorEmoji","Hack:size=10"};
 static const char dmenufont[]       = "MesloLGS NF:size=10";
 static const char col_gray1[]       = "#2D3132";
 static const char col_gray2[]       = "#444444";
@@ -70,7 +70,7 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
-	{ "Ulauncher Preferences",  NULL,       NULL,       0,       1,           -1 },
+	{ "Ulauncher",  NULL,       NULL,       0,       1,           -1 },
 	{ "ulauncher",  NULL,       "",       0,       1,           -1 },
 	{ "Zoom",  NULL,       NULL,       0,       1,           -1 },
 };
