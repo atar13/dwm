@@ -228,6 +228,7 @@ static void setborderpx(const Arg *arg);
 static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
+static void setbarpadding(const Arg *arg);
 static void layoutscroll(const Arg *arg);
 static void setgaps(const Arg *arg);
 static void setlayout(const Arg *arg);
@@ -286,6 +287,8 @@ static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh, blw = 0;      /* bar geometry */
 static int lrpad;            /* sum of left and right padding for text */
+static int vp;               /* vertical padding for bar */
+static int sp;               /* side padding for bar */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
 static void (*handler[LASTEvent]) (XEvent *) = {
@@ -363,6 +366,8 @@ struct Pertag {
 
 	int drawwithgaps[LENGTH(tags) + 1]; /* gaps toggle for each tag */
 	int gappx[LENGTH(tags) + 1]; /* gaps for each tag */
+	int vbarpadding[LENGTH(tags) + 1];
+	int sbarpadding[LENGTH(tags) + 1];
 };
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
@@ -865,6 +870,8 @@ createmon(void)
 			m->pertag->drawwithgaps[i] = startwithgaps[(i - 1) % LENGTH(gappx)];
 			m->pertag->gappx[i] = gappx[(i - 1) % LENGTH(gappx)];
 		}
+		m->pertag->sbarpadding[i] = sidepad;
+		m->pertag->vbarpadding[i] = (topbar == 1) ? vertpad : -vertpad;
 	}
 	m->pertag->drawwithgaps[0] = startwithgaps[0]; 
 	m->pertag->gappx[0] = gappx[0];
@@ -942,7 +949,7 @@ drawbar(Monitor *m)
 	if (m == selmon) { /* status is only drawn on selected monitor */
 		drw_setscheme(drw, scheme[SchemeNorm]);
 		tw = TEXTW(stext) - lrpad / 2 + 2; /* 2px extra right padding */
-		drw_text(drw, m->ww - tw - stw, 0, tw, bh, lrpad / 2 - 2, stext, 0);
+		drw_text(drw, m->ww - tw - stw - 2 * selmon->pertag->sbarpadding[selmon->pertag->curtag], 0, tw, bh, lrpad / 2 - 2, stext, 0);
 	}
 
 	resizebarwin(m);
@@ -974,13 +981,13 @@ drawbar(Monitor *m)
 	if ((w = m->ww - tw - stw - x) > bh) {
 		if (m->sel) {
 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
-			drw_text(drw, x, 0, w, bh, lrpad / 2 + (m->sel->icon ? m->sel->icw + ICONSPACING : 0), m->sel->name, 0);
+			drw_text(drw, x, 0, w - 2 * selmon->pertag->sbarpadding[selmon->pertag->curtag], bh, lrpad / 2 + (m->sel->icon ? m->sel->icw + ICONSPACING : 0), m->sel->name, 0);
 			if (m->sel->icon) drw_pic(drw, x + lrpad / 2, (bh - m->sel->ich) / 2, m->sel->icw, m->sel->ich, m->sel->icon);
 			if (m->sel->isfloating)
 				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
 		} else {
 			drw_setscheme(drw, scheme[SchemeNorm]);
-			drw_rect(drw, x, 0, w, bh, 1, 1);
+			drw_rect(drw, x, 0, w - 2 * selmon->pertag->sbarpadding[selmon->pertag->curtag], bh, 1, 1);
 		}
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww - stw, bh);
@@ -1719,7 +1726,8 @@ resizebarwin(Monitor *m) {
 	unsigned int w = m->ww;
 	if (showsystray && m == systraytomon(m) && !systrayonleft)
 		w -= getsystraywidth();
-	XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, w, bh);
+	// XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, w, bh);
+		XMoveResizeWindow(dpy, m->barwin, m->wx + selmon->pertag->sbarpadding[selmon->pertag->curtag], m->by + selmon->pertag->vbarpadding[selmon->pertag->curtag], m->ww -  2 * selmon->pertag->sbarpadding[selmon->pertag->curtag], bh);
 }
 
 void
@@ -2080,6 +2088,30 @@ setgaps(const Arg *arg)
 }
 
 void
+setbarpadding(const Arg *arg)
+{
+	if (arg->i == 0) {
+		selmon->pertag->sbarpadding[selmon->pertag->curtag] = sidepad;
+		selmon->pertag->vbarpadding[selmon->pertag->curtag] = vertpad;
+	} else {
+		if (selmon->pertag->sbarpadding[selmon->pertag->curtag] + arg->i < 0) {
+			selmon->pertag->sbarpadding[selmon->pertag->curtag] = 0;
+		} 
+		if (selmon->pertag->vbarpadding[selmon->pertag->curtag] + arg->i < 0) {
+			selmon->pertag->vbarpadding[selmon->pertag->curtag] = 0;
+		} 
+		// only makes sense if sp and vp are the same 
+		// maybe handle other cases some other way
+		selmon->pertag->sbarpadding[selmon->pertag->curtag] += arg->i;
+		selmon->pertag->vbarpadding[selmon->pertag->curtag] += arg->i;
+	}
+	updatebarpos(selmon);
+	resizebarwin(selmon);
+	arrange(selmon);
+}
+
+
+void
 layoutscroll(const Arg *arg)
 {
 	if (!arg || !arg->i)
@@ -2147,6 +2179,8 @@ setup(void)
 		die("no fonts could be loaded.");
 	lrpad = drw->fonts->h;
 	bh = user_bh ? user_bh : drw->fonts->h + 2;
+	sp = sidepad;
+	vp = (topbar == 1) ? vertpad : - vertpad;
 	updategeom();
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
@@ -2565,7 +2599,8 @@ updatebars(void)
 		w = m->ww;
 		if (showsystray && m == systraytomon(m))
 			w -= getsystraywidth();
-		m->barwin = XCreateWindow(dpy, root, m->wx, m->by, w, bh, 0, DefaultDepth(dpy, screen),
+
+		m->barwin = XCreateWindow(dpy, root, m->wx + selmon->pertag->sbarpadding[selmon->pertag->curtag], m->by + selmon->pertag->vbarpadding[selmon->pertag->curtag], w - 2 * selmon->pertag->sbarpadding[selmon->pertag->curtag], bh, 0, DefaultDepth(dpy, screen),
 				CopyFromParent, DefaultVisual(dpy, screen),
 				CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
 		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
@@ -2582,11 +2617,17 @@ updatebarpos(Monitor *m)
 	m->wy = m->my;
 	m->wh = m->mh;
 	if (m->showbar) {
-		m->wh -= bh;
-		m->by = m->topbar ? m->wy : m->wy + m->wh;
-		m->wy = m->topbar ? m->wy + bh : m->wy;
+		m->wh = m->wh - vertpad - bh;
+		m->by = m->topbar ? m->wy : m->wy + m->wh + vertpad;
+		if (m->pertag->vbarpadding[m->pertag->curtag])
+			m->wy = m->topbar ? m->wy + bh + m->pertag->vbarpadding[m->pertag->curtag] : m->wy;
+		else 
+			m->wy = m->topbar ? m->wy + bh + vertpad : m->wy;
 	} else
-		m->by = -bh;
+		if (m->pertag->vbarpadding[m->pertag->curtag])
+			m->by = -bh - m->pertag->vbarpadding[m->pertag->curtag];
+		else
+			m->by = -bh - vertpad;
 }
 
 void
@@ -2807,7 +2848,8 @@ updatesystray(void)
 	XWindowChanges wc;
 	Client *i;
 	Monitor *m = systraytomon(NULL);
-	unsigned int x = m->mx + m->mw;
+	unsigned int x = m->mx + m->mw - selmon->pertag->sbarpadding[selmon->pertag->curtag];
+	unsigned int y = m->by + selmon->pertag->vbarpadding[selmon->pertag->curtag];
 	unsigned int sw = TEXTW(stext) - lrpad + systrayspacing;
 	unsigned int w = 1;
 
@@ -2819,7 +2861,7 @@ updatesystray(void)
 		/* init systray */
 		if (!(systray = (Systray *)calloc(1, sizeof(Systray))))
 			die("fatal: could not malloc() %u bytes\n", sizeof(Systray));
-		systray->win = XCreateSimpleWindow(dpy, root, x, m->by, w, bh, 0, 0, scheme[SchemeSel][ColBg].pixel);
+		systray->win = XCreateSimpleWindow(dpy, root, x, y, w, bh, 0, 0, scheme[SchemeSel][ColBg].pixel);
 		wa.event_mask        = ButtonPressMask | ExposureMask;
 		wa.override_redirect = True;
 		wa.background_pixel  = scheme[SchemeNorm][ColBg].pixel;
@@ -2855,7 +2897,7 @@ updatesystray(void)
 	w = w ? w + systrayspacing : 1;
 	x -= w;
 	XMoveResizeWindow(dpy, systray->win, x, m->by, w, bh);
-	wc.x = x; wc.y = m->by; wc.width = w; wc.height = bh;
+	wc.x = x; wc.y = y; wc.width = w; wc.height = bh;
 	wc.stack_mode = Above; wc.sibling = m->barwin;
 	XConfigureWindow(dpy, systray->win, CWX|CWY|CWWidth|CWHeight|CWSibling|CWStackMode, &wc);
 	XMapWindow(dpy, systray->win);
@@ -2886,7 +2928,7 @@ updatepreview(void)
 		.event_mask = ButtonPressMask|ExposureMask
 	};
 	for (m = mons; m; m = m->next) {
-		m->tagwin = XCreateWindow(dpy, root, m->wx, m->by + bh, m->mw / scalepreview, m->mh / scalepreview, 0,
+		m->tagwin = XCreateWindow(dpy, root, m->wx + selmon->pertag->sbarpadding[selmon->pertag->curtag], m->by + selmon->pertag->vbarpadding[selmon->pertag->curtag] + bh, m->mw / scalepreview, m->mh / scalepreview, 0,
 				DefaultDepth(dpy, screen), CopyFromParent, DefaultVisual(dpy, screen),
 				CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
 		XDefineCursor(dpy, m->tagwin, cursor[CurNormal]->cursor);
