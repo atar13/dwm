@@ -42,7 +42,7 @@ static const char *colors[][3]      = {
 static const char *const autostart[] = {
   "go-dwm-statusbar", NULL,
 	"sh", "-c", "/home/atarbinian/.fehbg", NULL,
-	"picom", "--experimental-backends", NULL,
+	"picom", "--experimental-backend", NULL,
 	"dunst", NULL,
 	"nm-applet", NULL,
 	"pnmixer", NULL,
@@ -134,6 +134,8 @@ static const char *previous_cmd[] = {"playerctl", "previous", NULL};
 
 static const char *scrotcmd[] = {"sh", "/home/atarbinian/.scrot-select.sh", NULL};
 
+static const char *demojicmd[] = {"sh", "/usr/bin/demoji", NULL};
+
 #include "shift-tools.c"
 
 #include "movestack.c"
@@ -147,6 +149,7 @@ static Key keys[] = {
 	/* { MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lockcmd } }, */
 	{ MODKEY|ShiftMask,             XK_v,      spawn,          {.v = scrotcmd } },
 	{ 0,                            XK_Print,      						 spawn,          {.v = scrotcmd } },
+	{ MODKEY,                            XK_o,      						 spawn,          {.v = demojicmd } },
 	{ 0,             								XF86XK_MonBrightnessDown,  spawn,          {.v = dec_brightness } },
 	{ 0,           									XF86XK_MonBrightnessUp,    spawn,          {.v = inc_brightness } },
 	{ 0,             								XF86XK_AudioMute,     		 spawn,          {.v = toggle_Mute } },
