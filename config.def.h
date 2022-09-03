@@ -57,13 +57,15 @@ static const char *colors[][3] = {
 
 static const char *const autostart[] = {
     "go-dwm-statusbar", NULL, "sh", "-c", "/home/atarbinian/.fehbg", NULL,
-    // "picom", "--experimental-backend", NULL, "dunst", NULL, "nm-applet",
-    // NULL,
-    "pnmixer", NULL, "blueman-applet", NULL, "systemctl", "start", "--user",
-    "ulauncher.service", NULL,
+    "picom", "--experimental-backends", NULL, 
+    "dunst", NULL, 
+    "nm-applet", NULL,
+    "pnmixer", NULL, "blueman-applet", NULL, 
+    "systemctl", "start", "--user", "ulauncher.service", NULL,
     /* "/home/atarbinian/.local/bin/locker", NULL, */
-    "lxpolkit", "NULL", "sh", "-c",
-    "\"/home/atarbinian/.dwm/gnome-keyring.sh\"", NULL, NULL /* terminate */
+    "xss-lock --transfer-sleep-lock -- lock", NULL,
+    "lxpolkit", NULL,
+    // "sh", "-c", "/home/atarbinian/.dwm/gnome-keyring.sh", NULL,
 };
 
 /* tagging */
@@ -71,8 +73,7 @@ static const char *const autostart[] = {
 #define TAG_PREPEND "%s  " /* formatted as 2 chars */
 #define MAX_TAGLEN 16      /* altogether */
 static char tags[][MAX_TAGLEN] = {"", "", "", "", "", "", "", "", ""};
-static char const const_tags[][MAX_TAGLEN] = {"", "", "", "", "",
-                                              "", "", "", ""};
+static char const const_tags[][MAX_TAGLEN] = {"", "", "", "", "", "", "", "", ""};
 
 static const Rule rules[] = {
     /* xprop(1):
