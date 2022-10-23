@@ -63,8 +63,10 @@ static const char *const autostart[] = {
     "pnmixer", NULL, "blueman-applet", NULL, 
     "systemctl", "start", "--user", "ulauncher.service", NULL,
     /* "/home/atarbinian/.local/bin/locker", NULL, */
-    "xss-lock --transfer-sleep-lock -- lock", NULL,
     "lxpolkit", NULL,
+    "xss-lock", "--transfer-sleep-lock", "--", "/home/atarbinian/.local/bin/lock", NULL,
+    "xset", "+dpms", NULL,
+    "xset", "dpms", "60", "120", NULL,
     // "sh", "-c", "/home/atarbinian/.dwm/gnome-keyring.sh", NULL,
 };
 
@@ -135,6 +137,9 @@ static const char *roficmd[] = {
     "-modi",  "drun",
     "-theme", "~/.config/rofi/launchers/colorful/style_7.rasi",
     NULL};
+static const char *ulaunchercmd[] = {
+    "ulauncher-toggle", NULL
+};
 
 static const char *termcmd[] = {"kitty", NULL};
 
@@ -161,16 +166,15 @@ static const char *previous_cmd[] = {"playerctl", "previous", NULL};
 static const char *scrotcmd[] = {"sh", "/home/atarbinian/.scrot-select.sh",
                                  NULL};
 
-static const char *demojicmd[] = {"sh", "/usr/bin/demoji", NULL};
+static const char *demojicmd[] = {"sh", "~/.local/bin/demoji", NULL};
 
 #include "shift-tools.c"
-
 #include "movestack.c"
+
 static Key keys[] = {
     /* modifier                     key        function        argument */
     {MODKEY, XK_p, spawn, {.v = dmenucmd}},
-    /* { MODKEY,                       XK_space,  spawn,      	   {.v =
-       roficmd} }, */
+    { MODKEY,                       XK_space,  spawn,      	   {.v = ulaunchercmd} },
     {MODKEY | ShiftMask, XK_Return, spawn, {.v = termcmd}},
     {MODKEY | ShiftMask, XK_f, spawn, {.v = firefoxcmd}},
     {MODKEY | ShiftMask, XK_p, spawn, {.v = firefoxprivatecmd}},
