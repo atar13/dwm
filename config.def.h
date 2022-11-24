@@ -74,8 +74,8 @@ static const char *const autostart[] = {
 #define MAX_TAGNAME_LEN 14 /* excludes TAG_PREPEND */
 #define TAG_PREPEND "%s  " /* formatted as 2 chars */
 #define MAX_TAGLEN 16      /* altogether */
-static char tags[][MAX_TAGLEN] = {"", "", "", "", "", "", "", "", ""};
-static char const const_tags[][MAX_TAGLEN] = {"", "", "", "", "", "", "", "", ""};
+static char tags[][MAX_TAGLEN] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+static char const const_tags[][MAX_TAGLEN] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
 static const Rule rules[] = {
     /* xprop(1):
@@ -148,16 +148,24 @@ static const char *firefoxcmd[] = {"firefox", NULL};
 static const char *firefoxprivatecmd[] = {"firefox", "--private-window", NULL};
 
 /*brightness comamnds */
-static const char *inc_brightness[] = {"light", "-A", "5", NULL};
-static const char *dec_brightness[] = {"light", "-U", "5", NULL};
+// static const char *inc_brightness[] = {"light", "-A", "5", NULL};
+static const char *inc_brightness[] = {"/home/atarbinian/Pkgs/dotfiles/bri.sh", "up", "5", NULL};
+
+// static const char *dec_brightness[] = {"light", "-U", "5", NULL};
+static const char *dec_brightness[] = {"/home/atarbinian/Pkgs/dotfiles/bri.sh", "down", "5", NULL};
 
 /*volume commands */
-static const char *toggle_Mute[] = {"pactl", "set-sink-mute", "@DEFAULT_SINK@",
-                                    "toggle", NULL};
-static const char *inc_volume[] = {"pactl", "set-sink-volume", "@DEFAULT_SINK@",
-                                   "+5%", NULL};
-static const char *dec_volume[] = {"pactl", "set-sink-volume", "@DEFAULT_SINK@",
-                                   "-5%", NULL};
+// static const char *toggle_Mute[] = {"pactl", "set-sink-mute", "@DEFAULT_SINK@",
+                                    // "toggle", NULL};
+static const char *toggle_Mute[] = {"/home/atarbinian/Pkgs/dotfiles/vol.sh", "toggle", NULL};
+
+// static const char *inc_volume[] = {"pactl", "set-sink-volume", "@DEFAULT_SINK@",
+//                                    "+5%", NULL};
+static const char *inc_volume[] = {"/home/atarbinian/Pkgs/dotfiles/vol.sh", "+5%", NULL};
+
+// static const char *dec_volume[] = {"pactl", "set-sink-volume", "@DEFAULT_SINK@",
+//                                    "-5%", NULL};
+static const char *dec_volume[] = {"/home/atarbinian/Pkgs/dotfiles/vol.sh", "-5%", NULL};
 
 static const char *play_cmd[] = {"playerctl", "play-pause", NULL};
 static const char *next_cmd[] = {"playerctl", "next", NULL};
@@ -166,7 +174,7 @@ static const char *previous_cmd[] = {"playerctl", "previous", NULL};
 static const char *scrotcmd[] = {"sh", "/home/atarbinian/.scrot-select.sh",
                                  NULL};
 
-static const char *demojicmd[] = {"sh", "~/.local/bin/demoji", NULL};
+static const char *demojicmd[] = {"demoji", NULL};
 
 #include "shift-tools.c"
 #include "movestack.c"
@@ -178,11 +186,10 @@ static Key keys[] = {
     {MODKEY | ShiftMask, XK_Return, spawn, {.v = termcmd}},
     {MODKEY | ShiftMask, XK_f, spawn, {.v = firefoxcmd}},
     {MODKEY | ShiftMask, XK_p, spawn, {.v = firefoxprivatecmd}},
-    /* { MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lockcmd
-       } }, */
+    { MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lockcmd } },
     {MODKEY | ShiftMask, XK_v, spawn, {.v = scrotcmd}},
     {0, XK_Print, spawn, {.v = scrotcmd}},
-    {MODKEY | ShiftMask, XK_o, spawn, {.v = demojicmd}},
+    {MODKEY | ShiftMask, XK_i, spawn, {.v = demojicmd}},
     {0, XF86XK_MonBrightnessDown, spawn, {.v = dec_brightness}},
     {0, XF86XK_MonBrightnessUp, spawn, {.v = inc_brightness}},
     {0, XF86XK_AudioMute, spawn, {.v = toggle_Mute}},
@@ -223,10 +230,10 @@ static Key keys[] = {
     {MODKEY | ShiftMask, XK_space, togglefloating, {0}},
     {MODKEY, XK_0, view, {.ui = ~0}},
     {MODKEY | ShiftMask, XK_0, tag, {.ui = ~0}},
-    {MODKEY, XK_comma, focusmon, {.i = -1}},
-    {MODKEY, XK_period, focusmon, {.i = +1}},
-    {MODKEY | ShiftMask, XK_comma, tagmon, {.i = -1}},
-    {MODKEY | ShiftMask, XK_period, tagmon, {.i = +1}},
+    {MODKEY, XK_z, focusmon, {.i = -1}},
+    {MODKEY, XK_x, focusmon, {.i = +1}},
+    {MODKEY | ShiftMask, XK_z, tagmon, {.i = -1}},
+    {MODKEY | ShiftMask, XK_x, tagmon, {.i = +1}},
     {MODKEY, XK_bracketleft, setborderpx, {.i = -1}},
     {MODKEY, XK_bracketright, setborderpx, {.i = +1}},
     {MODKEY, XK_backslash, setborderpx, {.i = 0}},
