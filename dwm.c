@@ -1586,7 +1586,8 @@ nametag(const Arg *arg) {
 			if(*name) {
 				strcat(tags[i], name);
 			} else {
-				sprintf(tags[i], const_tags[i]);
+				//sprintf(tags[i], const_tags[i]);
+        strcpy(tags[i], const_tags[i]);
 			}
 				
 
