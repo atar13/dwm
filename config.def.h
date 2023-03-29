@@ -23,7 +23,7 @@ static const int systraypinningfailfirst =
 static const int showsystray = 1; /* 0 means no systray */
 static const int showbar = 1;     /* 0 means no bar */
 static const int topbar = 1;      /* 0 means bottom bar */
-static const int user_bh = 30; /* 0 means that dwm will calculate bar height, >=
+static const int user_bh = 20; /* 0 means that dwm will calculate bar height, >=
                                   1 means dwm will user_bh as bar height */
 
 #define ICONSIZE (bh - 3) /* icon size */
@@ -64,9 +64,10 @@ static const char *const autostart[] = {
     "systemctl", "start", "--user", "ulauncher.service", NULL,
     /* "/home/atarbinian/.local/bin/locker", NULL, */
     "lxpolkit", NULL,
+    "udiskie", NULL,
     "xss-lock", "--transfer-sleep-lock", "--", "/home/atarbinian/.local/bin/lock", NULL,
-    "xset", "+dpms", NULL,
-    "xset", "dpms", "60", "120", NULL,
+    //"xset", "+dpms", NULL,
+    //"xset", "dpms", "60", "120", NULL,
     // "sh", "-c", "/home/atarbinian/.dwm/gnome-keyring.sh", NULL,
 };
 
@@ -128,9 +129,11 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] =
     "0"; /* component of dmenucmd, manipulated in spawn() */
+
+
 static const char *dmenucmd[] = {
     "dmenu_run", "-m",  dmenumon,   "-fn", dmenufont, "-nb", col_black, "-nf",
-    col_gray3,   "-sb", col_purple, "-sf", col_gray4, "-h",  "30",      NULL};
+    col_gray3,   "-sb", col_purple, "-sf", col_gray4, "-h",  "20",      NULL};
 static const char *roficmd[] = {
     "rofi",   "-no-lazy-grab",
     "-show",  "drun",
