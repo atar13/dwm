@@ -56,19 +56,22 @@ static const char *colors[][3] = {
 };
 
 static const char *const autostart[] = {
-    "go-dwm-statusbar", NULL, "sh", "-c", "/home/atarbinian/.fehbg", NULL,
+    "sh", "-c", "/home/atarbinian/.fehbg", NULL,
     "picom", "--experimental-backends", NULL, 
     "dunst", NULL, 
     "nm-applet", NULL,
-    "pnmixer", NULL, "blueman-applet", NULL, 
+    "pnmixer", NULL, 
+    "blueman-applet", NULL, 
     "systemctl", "start", "--user", "ulauncher.service", NULL,
-    /* "/home/atarbinian/.local/bin/locker", NULL, */
     "lxpolkit", NULL,
     "udiskie", NULL,
-    "xss-lock", "--transfer-sleep-lock", "--", "/home/atarbinian/.local/bin/lock", NULL,
+    "xss-lock", "--transfer-sleep-lock", "--", "/home/atarbinian/.local/bin/scripts/lock", NULL,
+    "go-dwm-statusbar", NULL,
+    "flameshot", NULL,
     //"xset", "+dpms", NULL,
     //"xset", "dpms", "60", "120", NULL,
     // "sh", "-c", "/home/atarbinian/.dwm/gnome-keyring.sh", NULL,
+    /* "/home/atarbinian/.local/bin/locker", NULL, */
 };
 
 /* tagging */
@@ -134,48 +137,33 @@ static char dmenumon[2] =
 static const char *dmenucmd[] = {
     "dmenu_run", "-m",  dmenumon,   "-fn", dmenufont, "-nb", col_black, "-nf",
     col_gray3,   "-sb", col_purple, "-sf", col_gray4, "-h",  "20",      NULL};
-static const char *roficmd[] = {
-    "rofi",   "-no-lazy-grab",
-    "-show",  "drun",
-    "-modi",  "drun",
-    "-theme", "~/.config/rofi/launchers/colorful/style_7.rasi",
-    NULL};
-static const char *ulaunchercmd[] = {
+/* static const char *ulaunchercmd[] = {
     "ulauncher-toggle", NULL
-};
+}; */
 
 static const char *termcmd[] = {"kitty", NULL};
 
-static const char *lockcmd[] = {"/home/atarbinian/.local/bin/lock", "&", NULL};
+static const char *lockcmd[] = {"loginctl", "lock-session", NULL};
 static const char *firefoxcmd[] = {"firefox", NULL};
 static const char *firefoxprivatecmd[] = {"firefox", "--private-window", NULL};
 
 /*brightness comamnds */
-// static const char *inc_brightness[] = {"light", "-A", "5", NULL};
-static const char *inc_brightness[] = {"/home/atarbinian/Pkgs/dotfiles/bri.sh", "up", "5", NULL};
-
-// static const char *dec_brightness[] = {"light", "-U", "5", NULL};
-static const char *dec_brightness[] = {"/home/atarbinian/Pkgs/dotfiles/bri.sh", "down", "5", NULL};
+static const char *inc_brightness[] = {"/home/atarbinian/.local/bin/scripts/bri.sh", "up", "5", NULL};
+static const char *dec_brightness[] = {"/home/atarbinian/.local/bin/scripts/bri.sh", "down", "5", NULL};
 
 /*volume commands */
-// static const char *toggle_Mute[] = {"pactl", "set-sink-mute", "@DEFAULT_SINK@",
-                                    // "toggle", NULL};
-static const char *toggle_Mute[] = {"/home/atarbinian/Pkgs/dotfiles/vol.sh", "toggle", NULL};
+static const char *toggle_Mute[] = {"/home/atarbinian/.local/bin/scripts/vol.sh", "toggle", NULL};
 
-// static const char *inc_volume[] = {"pactl", "set-sink-volume", "@DEFAULT_SINK@",
-//                                    "+5%", NULL};
-static const char *inc_volume[] = {"/home/atarbinian/Pkgs/dotfiles/vol.sh", "+5%", NULL};
+static const char *inc_volume[] = {"/home/atarbinian/.local/bin/scripts/vol.sh", "+5%", NULL};
 
-// static const char *dec_volume[] = {"pactl", "set-sink-volume", "@DEFAULT_SINK@",
-//                                    "-5%", NULL};
-static const char *dec_volume[] = {"/home/atarbinian/Pkgs/dotfiles/vol.sh", "-5%", NULL};
+static const char *dec_volume[] = {"/home/atarbinian/.local/bin/scripts/vol.sh", "-5%", NULL};
 
 static const char *play_cmd[] = {"playerctl", "play-pause", NULL};
 static const char *next_cmd[] = {"playerctl", "next", NULL};
 static const char *previous_cmd[] = {"playerctl", "previous", NULL};
 
-static const char *scrotcmd[] = {"sh", "/home/atarbinian/.scrot-select.sh",
-                                 NULL};
+static const char *flameshot_gui_cmd[] = {"flameshot", "gui", NULL};
+static const char *flameshot_full_cmd[] = {"flameshot", "full", NULL};
 
 static const char *demojicmd[] = {"demoji", NULL};
 
@@ -185,13 +173,14 @@ static const char *demojicmd[] = {"demoji", NULL};
 static Key keys[] = {
     /* modifier                     key        function        argument */
     {MODKEY, XK_p, spawn, {.v = dmenucmd}},
-    { MODKEY,                       XK_space,  spawn,      	   {.v = ulaunchercmd} },
+    // { MODKEY,                       XK_space,  spawn,      	   {.v = ulaunchercmd} },
     {MODKEY | ShiftMask, XK_Return, spawn, {.v = termcmd}},
     {MODKEY | ShiftMask, XK_f, spawn, {.v = firefoxcmd}},
     {MODKEY | ShiftMask, XK_p, spawn, {.v = firefoxprivatecmd}},
     { MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lockcmd } },
-    {MODKEY | ShiftMask, XK_v, spawn, {.v = scrotcmd}},
-    {0, XK_Print, spawn, {.v = scrotcmd}},
+    {MODKEY | ShiftMask, XK_v, spawn, {.v = flameshot_gui_cmd}},
+    {MODKEY | ShiftMask, XK_s, spawn, {.v = flameshot_full_cmd}},
+    {0, XK_Print, spawn, {.v = flameshot_full_cmd}},
     {MODKEY | ShiftMask, XK_i, spawn, {.v = demojicmd}},
     {0, XF86XK_MonBrightnessDown, spawn, {.v = dec_brightness}},
     {0, XF86XK_MonBrightnessUp, spawn, {.v = inc_brightness}},
