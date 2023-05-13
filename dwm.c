@@ -2356,8 +2356,9 @@ switchtag(void)
 				imlib_context_set_visual(DefaultVisual(dpy, screen));
 				imlib_context_set_drawable(RootWindow(dpy, screen));
 				//uncomment the following line and comment the other imlin_copy.. line if you don't want the bar showing on the preview
-				//imlib_copy_drawable_to_image(0, selmon->wx, selmon->wy, selmon->ww ,selmon->wh, 0, 0, 1);
-				imlib_copy_drawable_to_image(0, selmon->mx, selmon->my, selmon->mw ,selmon->mh, 0, 0, 1);
+				imlib_copy_drawable_to_image(0, selmon->wx, selmon->wy, selmon->ww ,selmon->wh, 0, 0, 1);
+				//imlib_copy_drawable_to_image(0, selmon->mx, selmon->my, selmon->mw ,selmon->mh, 0, 0, 1);
+                fprintf(stderr, "DEBUG: %p %d %d tagmap: %d\n", selmon, selmon->mw, selmon->mh, selmon->tagmap[i]);
 				selmon->tagmap[i] = XCreatePixmap(dpy, selmon->tagwin, selmon->mw / scalepreview, selmon->mh / scalepreview, DefaultDepth(dpy, screen));
 				imlib_context_set_drawable(selmon->tagmap[i]);
 				imlib_render_image_part_on_drawable_at_size(0, 0, selmon->mw, selmon->mh, 0, 0, selmon->mw / scalepreview, selmon->mh / scalepreview);
