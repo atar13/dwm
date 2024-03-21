@@ -8,7 +8,7 @@
       (system:
         let pkgs = nixpkgs.legacyPackages.${system}; in
         {
-          packages.dwm = pkgs.callPackage ./package.nix { };
+          packages.default = pkgs.callPackage ./package.nix { };
           devShells.default = import ./shell.nix { inherit pkgs; };
           formatter = pkgs.nixpkgs-fmt;
         }
