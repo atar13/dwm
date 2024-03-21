@@ -5,3 +5,6 @@ dwm
 .vscode/
 
 config.h
+
+# output of nix derivation
+result
