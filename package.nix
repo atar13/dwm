@@ -8,14 +8,19 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "atar13";
     repo = "dwm";
-    rev = "83dcec7c00d88c5fd84ee1c1246e487fc2cece6e";
-    sha256 = "sha256-mpWvIc8j4vDoipCputK/JdO7m3bzDCQ9M8L1dXFOK+s=";
+    rev = "a7ef295b7fd8d84ce730ba16dde6380bc0e8f206";
+    sha256 = "sha256-VgSrYzu3Sxsy7f+MXJZkk3xztcHX/3tud0b4HDI5WqI=";
   };
 
   buildInputs = [ libX11 libXft libXinerama imlib2 ];
 
   prePatch = ''
     substituteInPlace config.mk --replace '/usr/local' $out
+  '';
+
+  postInstall = ''
+      mkdir -p $out/bin
+      cp scripts/* $out/bin
   '';
 
   meta = with lib; {
