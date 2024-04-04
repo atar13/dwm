@@ -4,13 +4,7 @@ stdenv.mkDerivation {
   name = "dwm-atar13";
   version = "0-unstable-2023-04-11";
 
-
-  src = fetchFromGitHub {
-    owner = "atar13";
-    repo = "dwm";
-    rev = "a7ef295b7fd8d84ce730ba16dde6380bc0e8f206";
-    sha256 = "sha256-VgSrYzu3Sxsy7f+MXJZkk3xztcHX/3tud0b4HDI5WqI=";
-  };
+  src = ./
 
   buildInputs = [ libX11 libXft libXinerama imlib2 ];
 
