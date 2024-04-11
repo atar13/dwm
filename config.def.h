@@ -62,10 +62,10 @@ static const char *const autostart[] = {
     "nm-applet", NULL,
     "pnmixer", NULL, 
     "blueman-applet", NULL, 
-    "systemctl", "start", "--user", "ulauncher.service", NULL,
+    // "systemctl", "start", "--user", "ulauncher.service", NULL,
     "lxpolkit", NULL,
     "udiskie", NULL,
-    "xss-lock", "--transfer-sleep-lock", "--", "/home/atarbinian/.local/bin/scripts/lock", NULL,
+    "xss-lock", "--transfer-sleep-lock", "--", "lock", NULL,
     "go-dwm-statusbar", NULL,
     "flameshot", NULL,
     //"xset", "+dpms", NULL,
@@ -148,15 +148,15 @@ static const char *firefoxcmd[] = {"firefox", NULL};
 static const char *firefoxprivatecmd[] = {"firefox", "--private-window", NULL};
 
 /*brightness comamnds */
-static const char *inc_brightness[] = {"/home/atarbinian/.local/bin/scripts/bri.sh", "up", "5", NULL};
-static const char *dec_brightness[] = {"/home/atarbinian/.local/bin/scripts/bri.sh", "down", "5", NULL};
+static const char *inc_brightness[] = {"bri.sh", "up", "5", NULL};
+static const char *dec_brightness[] = {"bri.sh", "down", "5", NULL};
 
 /*volume commands */
-static const char *toggle_Mute[] = {"/home/atarbinian/.local/bin/scripts/vol.sh", "toggle", NULL};
+static const char *toggle_Mute[] = {"vol.sh", "toggle", NULL};
 
-static const char *inc_volume[] = {"/home/atarbinian/.local/bin/scripts/vol.sh", "+5%", NULL};
+static const char *inc_volume[] = {"vol.sh", "+5%", NULL};
 
-static const char *dec_volume[] = {"/home/atarbinian/.local/bin/scripts/vol.sh", "-5%", NULL};
+static const char *dec_volume[] = {"vol.sh", "-5%", NULL};
 
 static const char *play_cmd[] = {"playerctl", "play-pause", NULL};
 static const char *next_cmd[] = {"playerctl", "next", NULL};
