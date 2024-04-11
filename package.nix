@@ -8,8 +8,8 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "atar13";
     repo = "dwm";
-    rev = "a7ef295b7fd8d84ce730ba16dde6380bc0e8f206";
-    sha256 = "sha256-VgSrYzu3Sxsy7f+MXJZkk3xztcHX/3tud0b4HDI5WqI=";
+    rev = "7de50ca0f15509af93105738f0d6a6d10c8085b8";
+    sha256 = "sha256-/xhK9AAAWwlPcjijh0ZEsMQ5vVEenVNsVxmnYk8SnHU=";
   };
 
   buildInputs = [ libX11 libXft libXinerama imlib2 ];
