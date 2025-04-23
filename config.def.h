@@ -35,8 +35,8 @@ static const char *fonts[] = {"DejaVuSansMono Nerd Font",
                               "MesloLGS NF",
                               "Noto Color Emoji",
                               "NotoColorEmoji",
-                              "Hack:size=10"};
-static const char dmenufont[] = "MesloLGS NF:size=10";
+                              "Hack:size=14"};
+static const char dmenufont[] = "MesloLGS NF:size=14";
 static const char col_gray1[] = "#2D3132";
 static const char col_gray2[] = "#444444";
 static const char col_gray3[] = "#bbbbbb";
@@ -57,7 +57,7 @@ static const char *colors[][3] = {
 
 static const char *const autostart[] = {
     "sh", "-c", "/home/atarbinian/.fehbg", NULL,
-    "picom", "--experimental-backends", NULL, 
+    // "picom", "--experimental-backends", NULL, 
     "dunst", NULL, 
     "nm-applet", NULL,
     "pnmixer", NULL, 
@@ -68,8 +68,8 @@ static const char *const autostart[] = {
     "xss-lock", "--transfer-sleep-lock", "--", "lock", NULL,
     "go-dwm-statusbar", NULL,
     "flameshot", NULL,
-    //"xset", "+dpms", NULL,
-    //"xset", "dpms", "60", "120", NULL,
+    "xset", "+dpms", NULL,
+    "xset", "dpms", "60", "120", NULL,
     // "sh", "-c", "/home/atarbinian/.dwm/gnome-keyring.sh", NULL,
     /* "/home/atarbinian/.local/bin/locker", NULL, */
 };
