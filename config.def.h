@@ -23,7 +23,7 @@ static const int systraypinningfailfirst =
 static const int showsystray = 1; /* 0 means no systray */
 static const int showbar = 1;     /* 0 means no bar */
 static const int topbar = 1;      /* 0 means bottom bar */
-static const int user_bh = 20; /* 0 means that dwm will calculate bar height, >=
+static const int user_bh = 0; /* 0 means that dwm will calculate bar height, >=
                                   1 means dwm will user_bh as bar height */
 
 #define ICONSIZE (bh - 3) /* icon size */
@@ -137,9 +137,9 @@ static char dmenumon[2] =
 static const char *dmenucmd[] = {
     "dmenu_run", "-m",  dmenumon,   "-fn", dmenufont, "-nb", col_black, "-nf",
     col_gray3,   "-sb", col_purple, "-sf", col_gray4, "-h",  "20",      NULL};
-/* static const char *ulaunchercmd[] = {
+static const char *ulaunchercmd[] = {
     "ulauncher-toggle", NULL
-}; */
+};
 
 static const char *termcmd[] = {"kitty", NULL};
 
@@ -173,7 +173,7 @@ static const char *demojicmd[] = {"demoji", NULL};
 static Key keys[] = {
     /* modifier                     key        function        argument */
     {MODKEY, XK_p, spawn, {.v = dmenucmd}},
-    // { MODKEY,                       XK_space,  spawn,      	   {.v = ulaunchercmd} },
+    { MODKEY,                       XK_space,  spawn,      	   {.v = ulaunchercmd} },
     {MODKEY | ShiftMask, XK_Return, spawn, {.v = termcmd}},
     {MODKEY | ShiftMask, XK_f, spawn, {.v = firefoxcmd}},
     {MODKEY | ShiftMask, XK_p, spawn, {.v = firefoxprivatecmd}},
